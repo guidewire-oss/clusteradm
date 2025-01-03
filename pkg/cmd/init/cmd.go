@@ -14,6 +14,9 @@ import (
 var example = `
 # Init the hub
 %[1]s init
+
+# Initialize the hub cluster with the awsirsa type of authentication for EKS clusters
+%[1]s init --registration-auth awsirsa
 `
 
 // NewCmd ...
@@ -78,6 +81,7 @@ func NewCmd(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, stream
 	_ = clusterManagerSet.SetAnnotation("singleton-name", "singletonSet", []string{})
 	o.Helm.AddFlags(singletonSet)
 	cmd.Flags().AddFlagSet(singletonSet)
+	cmd.Flags().StringVar(&o.registrationAuth, "registration-auth", "", "The type of authentication to initialize the hub cluster")
 
 	return cmd
 }

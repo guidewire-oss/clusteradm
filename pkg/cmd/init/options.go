@@ -50,6 +50,9 @@ type Options struct {
 	output string
 
 	Streams genericiooptions.IOStreams
+
+	// The type of authentication to use for initializing the hub cluster
+	registrationAuth string
 }
 
 func newOptions(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, streams genericiooptions.IOStreams) *Options {
