@@ -74,6 +74,7 @@ func (o *Options) complete(cmd *cobra.Command, args []string) (err error) {
 			RegistrationConfiguration: operatorv1.RegistrationHubConfiguration{
 				FeatureGates: genericclioptionsclusteradm.ConvertToFeatureGateAPI(
 					genericclioptionsclusteradm.HubMutableFeatureGate, ocmfeature.DefaultHubRegistrationFeatureGates),
+				AuthDrivers: generateAuthDrivers(o.registrationAuth),
 			},
 			WorkConfiguration: operatorv1.WorkConfiguration{
 				FeatureGates: genericclioptionsclusteradm.ConvertToFeatureGateAPI(
@@ -348,4 +349,11 @@ func (o *Options) deploySingletonControlplane(kubeClient kubernetes.Interface) e
 			"You can use "+fmt.Sprintf("\"kubectl --kubeconfig %s\"", kubeconfigfile)+" to access control plane.\n\n")
 	}
 	return nil
+}
+
+func generateAuthDrivers(registrationAuthType string) []operatorv1.AuthDriver {
+	if registrationAuthType == "aws-irsa" {
+		return []operatorv1.AuthDriver{operatorv1.AuthDriver{AuthType: "awsirsa"}}
+	}
+	return []operatorv1.AuthDriver{}
 }
