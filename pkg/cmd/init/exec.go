@@ -70,7 +70,7 @@ func (o *Options) complete(cmd *cobra.Command, args []string) (err error) {
 			},
 			Tag: bundleVersion.OCM,
 		}
-		authDrivers, err := generateAuthDrivers(o)
+		registrationDrivers, err := generateAuthDrivers(o)
 		if err != nil {
 			return err
 		}
@@ -78,7 +78,7 @@ func (o *Options) complete(cmd *cobra.Command, args []string) (err error) {
 			RegistrationConfiguration: operatorv1.RegistrationHubConfiguration{
 				FeatureGates: genericclioptionsclusteradm.ConvertToFeatureGateAPI(
 					genericclioptionsclusteradm.HubMutableFeatureGate, ocmfeature.DefaultHubRegistrationFeatureGates),
-				AuthDrivers: authDrivers,
+				RegistrationDrivers: registrationDrivers,
 			},
 			WorkConfiguration: operatorv1.WorkConfiguration{
 				FeatureGates: genericclioptionsclusteradm.ConvertToFeatureGateAPI(
@@ -355,14 +355,14 @@ func (o *Options) deploySingletonControlplane(kubeClient kubernetes.Interface) e
 	return nil
 }
 
-func generateAuthDrivers(o *Options) ([]operatorv1.AuthDriver, error) {
+func generateAuthDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error) {
 	if o.registrationAuth == "aws-irsa" {
 		rawConfig, err := o.ClusteradmFlags.KubectlFactory.ToRawKubeConfigLoader().RawConfig()
 		if err != nil {
 			klog.Errorf("unable to load managedcluster kubeconfig: %v", err)
 			return nil, err
 		}
-		return []operatorv1.AuthDriver{operatorv1.AuthDriver{AuthType: "awsirsa", HubClusterArn: rawConfig.Contexts[rawConfig.CurrentContext].Cluster}}, nil
+		return []operatorv1.RegistrationDriverHub{{AuthType: "awsirsa", HubClusterArn: rawConfig.Contexts[rawConfig.CurrentContext].Cluster}}, nil
 	}
-	return []operatorv1.AuthDriver{}, nil
+	return []operatorv1.RegistrationDriverHub{}, nil
 }
