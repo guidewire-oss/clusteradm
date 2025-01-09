@@ -359,10 +359,15 @@ func generateAuthDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error)
 	if o.registrationAuth == "aws-irsa" {
 		rawConfig, err := o.ClusteradmFlags.KubectlFactory.ToRawKubeConfigLoader().RawConfig()
 		if err != nil {
-			klog.Errorf("unable to load managedcluster kubeconfig: %v", err)
+			klog.Errorf("unable to load hub cluster kubeconfig: %v", err)
 			return nil, err
 		}
-		return []operatorv1.RegistrationDriverHub{{AuthType: "awsirsa", HubClusterArn: rawConfig.Contexts[rawConfig.CurrentContext].Cluster}}, nil
+		hubClusterArn := rawConfig.Contexts[rawConfig.CurrentContext].Cluster
+		if hubClusterArn == "" {
+			klog.Errorf("hubClusterArn has empty value in kubeconfig")
+			return nil, fmt.Errorf("unable to retrieve hubClusterArn from kubeconfig")
+		}
+		return []operatorv1.RegistrationDriverHub{{AuthType: "awsirsa", HubClusterArn: hubClusterArn}}, nil
 	}
-	return []operatorv1.RegistrationDriverHub{}, nil
+	return nil, nil
 }
