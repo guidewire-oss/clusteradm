@@ -15,6 +15,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/util/retry"
 	"k8s.io/klog/v2"
+	"k8s.io/utils/strings/slices"
 	ocmfeature "open-cluster-management.io/api/feature"
 	operatorv1 "open-cluster-management.io/api/operator/v1"
 	"open-cluster-management.io/clusteradm/pkg/cmd/init/preflight"
@@ -360,7 +361,7 @@ func (o *Options) deploySingletonControlplane(kubeClient kubernetes.Interface) e
 }
 
 func generateAuthDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error) {
-	if o.registrationAuth == "aws-irsa" {
+	if slices.Contains(o.registrationAuth, "aws-irsa") {
 		rawConfig, err := o.ClusteradmFlags.KubectlFactory.ToRawKubeConfigLoader().RawConfig()
 		if err != nil {
 			klog.Errorf("unable to load hub cluster kubeconfig: %v", err)
@@ -371,7 +372,7 @@ func generateAuthDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error)
 			klog.Errorf("hubClusterArn has empty value in kubeconfig")
 			return nil, fmt.Errorf("unable to retrieve hubClusterArn from kubeconfig")
 		}
-		return []operatorv1.RegistrationDriverHub{{AuthType: "awsirsa", HubClusterArn: hubClusterArn}}, nil
+		return []operatorv1.RegistrationDriverHub{{AuthType: "csr", HubClusterArn: ""}, {AuthType: "awsirsa", HubClusterArn: hubClusterArn}}, nil
 	}
-	return nil, nil
+	return []operatorv1.RegistrationDriverHub{{AuthType: "csr", HubClusterArn: ""}}, nil
 }
