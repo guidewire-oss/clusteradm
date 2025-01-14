@@ -94,14 +94,25 @@ func (o *Options) runWithClient(kubeClient *kubernetes.Clientset, clusterClient 
 }
 
 func (o *Options) accept(kubeClient *kubernetes.Clientset, clusterClient *clusterclientset.Clientset, clusterName string, waitMode bool) (bool, error) {
-	approved, err := o.approveCSR(kubeClient, clusterName, waitMode)
-	if err != nil {
-		return approved, fmt.Errorf("fail to approve the csr for cluster %s: %v", clusterName, err)
+	mc, err := clusterClient.ClusterV1().ManagedClusters().Get(context.TODO(),
+		clusterName,
+		metav1.GetOptions{})
+	_, hasEksArn := mc.Annotations["eks-managed-cluster-arn"]
+
+	var approved bool
+	if !hasEksArn {
+		approved, err := o.approveCSR(kubeClient, clusterName, waitMode)
+		if err != nil {
+			return approved, fmt.Errorf("fail to approve the csr for cluster %s: %v", clusterName, err)
+		}
+	} else {
+		approved = hasEksArn
 	}
+
 	err = o.updateManagedCluster(clusterClient, clusterName)
 	if err != nil {
 		return approved, err
-	}
+	} 
 	fmt.Fprintf(o.Streams.Out, "\n Your managed cluster %s has joined the Hub successfully. Visit https://open-cluster-management.io/scenarios or https://github.com/open-cluster-management-io/OCM/tree/main/solutions for next steps.\n", clusterName)
 	return approved, nil
 }
