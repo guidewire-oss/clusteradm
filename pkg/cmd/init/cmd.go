@@ -16,7 +16,7 @@ var example = `
 %[1]s init
 
 # Initialize the hub cluster with the type of authentication. Either or both of csr,awsirsa. Default csr.
-%[1]s init --registration-auth awsirsa --registration-auth csr
+%[1]s init --registration-auth aws-irsa --registration-auth csr
 `
 
 // NewCmd ...

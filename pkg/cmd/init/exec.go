@@ -361,6 +361,10 @@ func (o *Options) deploySingletonControlplane(kubeClient kubernetes.Interface) e
 }
 
 func generateAuthDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error) {
+	registrationDrivers := []operatorv1.RegistrationDriverHub{}
+	if slices.Contains(o.registrationAuth, "csr") {
+		registrationDrivers = append(registrationDrivers, operatorv1.RegistrationDriverHub{AuthType: "csr", HubClusterArn: ""})
+	}
 	if slices.Contains(o.registrationAuth, "aws-irsa") {
 		rawConfig, err := o.ClusteradmFlags.KubectlFactory.ToRawKubeConfigLoader().RawConfig()
 		if err != nil {
@@ -372,7 +376,7 @@ func generateAuthDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error)
 			klog.Errorf("hubClusterArn has empty value in kubeconfig")
 			return nil, fmt.Errorf("unable to retrieve hubClusterArn from kubeconfig")
 		}
-		return []operatorv1.RegistrationDriverHub{{AuthType: "csr", HubClusterArn: ""}, {AuthType: "awsirsa", HubClusterArn: hubClusterArn}}, nil
+		registrationDrivers = append(registrationDrivers, operatorv1.RegistrationDriverHub{AuthType: "awsirsa", HubClusterArn: hubClusterArn})
 	}
-	return []operatorv1.RegistrationDriverHub{{AuthType: "csr", HubClusterArn: ""}}, nil
+	return registrationDrivers, nil
 }
