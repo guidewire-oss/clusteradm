@@ -71,7 +71,7 @@ func (o *Options) complete(cmd *cobra.Command, args []string) (err error) {
 			},
 			Tag: bundleVersion.OCM,
 		}
-		registrationDrivers, err := generateAuthDrivers(o)
+		registrationDrivers, err := getRegistrationDrivers(o)
 		if err != nil {
 			return err
 		}
@@ -360,12 +360,12 @@ func (o *Options) deploySingletonControlplane(kubeClient kubernetes.Interface) e
 	return nil
 }
 
-func generateAuthDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error) {
+func getRegistrationDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, error) {
 	registrationDrivers := []operatorv1.RegistrationDriverHub{}
 	if slices.Contains(o.registrationAuth, "csr") {
-		registrationDrivers = append(registrationDrivers, operatorv1.RegistrationDriverHub{AuthType: "csr", HubClusterArn: ""})
+		registrationDrivers = append(registrationDrivers, operatorv1.RegistrationDriverHub{AuthType: "csr"})
 	}
-	if slices.Contains(o.registrationAuth, "aws-irsa") {
+	if slices.Contains(o.registrationAuth, "awsirsa") {
 		rawConfig, err := o.ClusteradmFlags.KubectlFactory.ToRawKubeConfigLoader().RawConfig()
 		if err != nil {
 			klog.Errorf("unable to load hub cluster kubeconfig: %v", err)

@@ -15,8 +15,8 @@ var example = `
 # Init the hub
 %[1]s init
 
-# Initialize the hub cluster with the type of authentication. Either or both of csr,awsirsa. Default csr.
-%[1]s init --registration-auth aws-irsa --registration-auth csr
+# Initialize the hub cluster with the type of authentication. Either or both of csr,awsirsa
+%[1]s init --registration-auth awsirsa --registration-auth csr
 `
 
 // NewCmd ...
@@ -81,7 +81,7 @@ func NewCmd(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, stream
 	_ = clusterManagerSet.SetAnnotation("singleton-name", "singletonSet", []string{})
 	o.Helm.AddFlags(singletonSet)
 	cmd.Flags().AddFlagSet(singletonSet)
-	cmd.Flags().StringArrayVar(&o.registrationAuth, "registration-auth", []string{"csr"}, "The type of authentication to use for registering and authenticating with hub, this flag can be repeated to specify multiple authentication types.")
+	cmd.Flags().StringArrayVar(&o.registrationAuth, "registration-auth", []string{}, "The type of authentication to use for registering and authenticating with hub, this flag can be repeated to specify multiple authentication types.")
 
 	return cmd
 }
