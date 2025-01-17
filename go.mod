@@ -2,6 +2,10 @@ module open-cluster-management.io/clusteradm
 
 go 1.22.6
 
+replace (
+	open-cluster-management.io/ocm => /Users/gjaswal/Documents/codebase/guidewire-oss/ocm
+)
+
 require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/disiqueira/gotree v1.0.0
@@ -31,7 +35,7 @@ require (
 	open-cluster-management.io/api v0.15.1-0.20250116010516-3a595d6a4e40
 	open-cluster-management.io/cluster-proxy v0.4.0
 	open-cluster-management.io/managed-serviceaccount v0.6.0
-	open-cluster-management.io/ocm v0.15.1-0.20250110031959-11896ccda197
+	open-cluster-management.io/ocm v0.15.1-0.20250117163747-f62242d0470b
 	open-cluster-management.io/sdk-go v0.15.1-0.20241125015855-1536c3970f8f
 	sigs.k8s.io/apiserver-network-proxy v0.29.0
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.30.3

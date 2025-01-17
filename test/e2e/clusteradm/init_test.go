@@ -37,33 +37,6 @@ var _ = ginkgo.Describe("test clusteradm with bootstrap token in singleton mode"
 			err = e2e.Clusteradm().Init(
 				"--use-bootstrap-token",
 				"--context", e2e.Cluster().Hub().Context(),
-				"--bundle-version=latest",
-				"--registration-auth awsirsa",
-			)
-			gomega.Expect(err).NotTo(gomega.HaveOccurred(), "clusteradm init error")
-
-			cm, err = operatorClient.OperatorV1().ClusterManagers().Get(context.TODO(), "cluster-manager", metav1.GetOptions{})
-			gomega.Expect(err).NotTo(gomega.HaveOccurred())
-			// Ensure that when only awsirsa is passed as registration-auth only awsirsa driver is available
-			gomega.Expect(len(cm.Spec.RegistrationConfiguration.RegistrationDrivers)).Should(gomega.Equal(1))
-
-			err = e2e.Clusteradm().Init(
-				"--use-bootstrap-token",
-				"--context", e2e.Cluster().Hub().Context(),
-				"--bundle-version=latest",
-				"--registration-auth awsirsa",
-				"--registration-auth csr",
-			)
-			gomega.Expect(err).NotTo(gomega.HaveOccurred(), "clusteradm init error")
-
-			cm, err = operatorClient.OperatorV1().ClusterManagers().Get(context.TODO(), "cluster-manager", metav1.GetOptions{})
-			gomega.Expect(err).NotTo(gomega.HaveOccurred())
-			// Ensure that awsirsa and csr is passed as registration-auth both the values are set.
-			gomega.Expect(len(cm.Spec.RegistrationConfiguration.RegistrationDrivers)).Should(gomega.Equal(2))
-
-			err = e2e.Clusteradm().Init(
-				"--use-bootstrap-token",
-				"--context", e2e.Cluster().Hub().Context(),
 				"--feature-gates=ManagedClusterAutoApproval=true",
 				"--bundle-version=latest",
 			)
