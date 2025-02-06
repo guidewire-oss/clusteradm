@@ -86,5 +86,9 @@ func NewCmd(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, stream
 	cmd.Flags().StringVar(&o.hubClusterArn, "hub-cluster-arn", "",
 		"The hubCluster ARN to be passed if awsirsa is one of the registrationAuths and the cluster name in EKS kubeconfig doesn't contain hubClusterArn")
 
+	cmd.Flags().StringSliceVar(&o.autoApprovedCSRIdentities, "auto-approved-csr-identities", []string{},
+		"The users or identities that can be auto approved for CSR and auto accepted to join with hub cluster")
+	cmd.Flags().StringSliceVar(&o.autoApprovedARNPatterns, "auto-approved-arn-patterns", []string{},
+		"List of AWS EKS ARN patterns so any EKS clusters with these patterns will be auto accepted to join with hub cluster")
 	return cmd
 }
