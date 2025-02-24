@@ -379,7 +379,7 @@ func getRegistrationDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, err
 			if err != nil {
 				return registrationDrivers, err
 			}
-			registrationDriver = operatorv1.RegistrationDriverHub{AuthType: driver, HubClusterArn: hubClusterArn}
+			registrationDriver = operatorv1.RegistrationDriverHub{AuthType: driver, HubClusterArn: hubClusterArn, Tags: o.tags}
 		}
 		registrationDrivers = append(registrationDrivers, registrationDriver)
 	}

@@ -56,6 +56,8 @@ type Options struct {
 	// The optional ARN to pass if awsirsa is one of the registrationAuths
 	// and the cluster name in EKS kubeconfig doesn't contain hubClusterArn
 	hubClusterArn string
+	// List of tags to be added to AWS resources created by hub while processing awsirsa registration request
+	tags []string
 }
 
 func newOptions(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, streams genericiooptions.IOStreams) *Options {

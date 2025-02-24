@@ -16,7 +16,7 @@ var example = `
 %[1]s init
 
 # Initialize the hub cluster with the type of authentication. Either or both of csr,awsirsa
-%[1]s init --registration-auth awsirsa --registration-auth csr --hubClusterArn arn:aws:eks:us-west-2:123456789012:cluster/hub-cluster1
+%[1]s init --registration-auth awsirsa --registration-auth csr --hub-cluster-arn arn:aws:eks:us-west-2:123456789012:cluster/hub-cluster1 --tags product:v1:tenant:app-name=My-App,product:v1:tenant:created-by=Team-1
 `
 
 // NewCmd ...
@@ -85,6 +85,8 @@ func NewCmd(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, stream
 		"The type of authentication to use for registering and authenticating with hub. Only csr and awsirsa are accepted as valid inputs. This flag can be repeated to specify multiple authentication types.")
 	cmd.Flags().StringVar(&o.hubClusterArn, "hub-cluster-arn", "",
 		"The hubCluster ARN to be passed if awsirsa is one of the registrationAuths and the cluster name in EKS kubeconfig doesn't contain hubClusterArn")
+	cmd.Flags().StringSliceVar(&o.tags, "tags", []string{},
+		"List of tags to be added to AWS resources created by hub while processing awsirsa registration request, for example: product:v1:tenant:app-name=My-App,product:v1:tenant:created-by=Team-1")
 
 	return cmd
 }
