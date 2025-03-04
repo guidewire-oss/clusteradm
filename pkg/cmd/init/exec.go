@@ -159,9 +159,10 @@ func (o *Options) validate() error {
 		}
 	}
 
-	featureGates := o.clusterManagerChartConfig.ClusterManager.RegistrationConfiguration.FeatureGates
+	//featureGates := o.clusterManagerChartConfig.ClusterManager.RegistrationConfiguration.FeatureGates
+	featureGates := genericclioptionsclusteradm.ConvertToFeatureGateAPI(
+		genericclioptionsclusteradm.HubMutableFeatureGate, ocmfeature.DefaultHubRegistrationFeatureGates)
 	managedClusterAutoApprove := false
-
 	for _, feature := range featureGates {
 		if feature.Feature == "featuregate/ManagedClusterAutoApproval" {
 			if feature.Mode == "Enabled" {
