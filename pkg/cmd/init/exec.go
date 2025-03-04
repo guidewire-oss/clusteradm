@@ -153,19 +153,18 @@ func (o *Options) validate() error {
 	}
 
 	validRegistrationDriver := sets.New[string]("csr", "awsirsa")
-	for _, driver := range o.registrationAuth {
+	for _, driver := range o.registrationDrivers {
 		if !validRegistrationDriver.Has(driver) {
 			return fmt.Errorf("only csr and awsirsa are valid drivers")
 		}
 	}
 
-	//featureGates := o.clusterManagerChartConfig.ClusterManager.RegistrationConfiguration.FeatureGates
 	featureGates := genericclioptionsclusteradm.ConvertToFeatureGateAPI(
 		genericclioptionsclusteradm.HubMutableFeatureGate, ocmfeature.DefaultHubRegistrationFeatureGates)
 	managedClusterAutoApprove := false
 	for _, feature := range featureGates {
-		if feature.Feature == "featuregate/ManagedClusterAutoApproval" {
-			if feature.Mode == "Enabled" {
+		if feature.Feature == "ManagedClusterAutoApproval" {
+			if feature.Mode == "Enable" {
 				managedClusterAutoApprove = true
 			}
 		}
@@ -174,12 +173,12 @@ func (o *Options) validate() error {
 	if managedClusterAutoApprove {
 		// If hub registration does not accept awsirsa, we stop user if they also pass in a list of patterns for AWS EKS ARN.
 
-		if len(o.autoApprovedARNPatterns) > 0 && !sets.New[string](o.registrationAuth...).Has("awsirsa") {
+		if len(o.autoApprovedARNPatterns) > 0 && !sets.New[string](o.registrationDrivers...).Has("awsirsa") {
 			return fmt.Errorf("should not provide list of patterns for aws eks arn if not initializing hub with awsirsa registration")
 		}
 
 		// If hub registration does not accept csr, we stop user if they also pass in a list of users for CSR auto approval.
-		if len(o.autoApprovedCSRIdentities) > 0 && !sets.New[string](o.registrationAuth...).Has("csr") {
+		if len(o.autoApprovedCSRIdentities) > 0 && !sets.New[string](o.registrationDrivers...).Has("csr") {
 			return fmt.Errorf("should not provide list of users for csr to auto approve if not initializing hub with csr registration")
 		}
 	} else if len(o.autoApprovedARNPatterns) > 0 || len(o.autoApprovedCSRIdentities) > 0 {
@@ -400,7 +399,7 @@ func getRegistrationDrivers(o *Options) ([]operatorv1.RegistrationDriverHub, err
 	registrationDrivers := []operatorv1.RegistrationDriverHub{}
 	var registrationDriver operatorv1.RegistrationDriverHub
 
-	for _, driver := range o.registrationAuth {
+	for _, driver := range o.registrationDrivers {
 		if driver == "csr" {
 			csrConfig := &operatorv1.CSRConfig{AutoApprovedIdentities: o.autoApprovedCSRIdentities}
 			registrationDriver = operatorv1.RegistrationDriverHub{AuthType: driver, CSR: csrConfig}
