@@ -65,7 +65,7 @@ var _ = ginkgo.Describe("test clusteradm with bootstrap token in singleton mode"
 			gomega.Expect(len(cm.Spec.RegistrationConfiguration.RegistrationDrivers)).Should(gomega.Equal(2))
 			gomega.Expect(cm.Spec.RegistrationConfiguration.RegistrationDrivers[0].AuthType).Should(gomega.Equal("csr"))
 			gomega.Expect(cm.Spec.RegistrationConfiguration.RegistrationDrivers[1].AuthType).Should(gomega.Equal("awsirsa"))
-			gomega.Expect(cm.Spec.RegistrationConfiguration.RegistrationDrivers[1].HubClusterArn).
+			gomega.Expect(cm.Spec.RegistrationConfiguration.RegistrationDrivers[1].AwsIrsa.HubClusterArn).
 				Should(gomega.Equal("arn:aws:eks:us-west-2:123456789012:cluster/hub-cluster1"))
 
 			err = e2e.Clusteradm().Init(
